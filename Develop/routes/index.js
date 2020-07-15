@@ -2,34 +2,49 @@ const router = require("express").Router();
 const path = require("path");
 
 // database
-const db = require("../models");
+const Workout = require("../models/Workout.js");
 
 // api routes
+router.post("/api/workouts", (req, res) => {
+
+    Workout.create()
+        .then( data => {res.json(data)})
+        .catch( e => {res.json(e)})
+});
+
 router.get("/api/workouts", (req, res) => {
     // res.json all the workouts
-    db.Workouts.find()
-        .then( data => {res.json(data)})
+    Workout.find()
+        .then( data => {
+            console.log(data) 
+            res.json(data)})
         .catch( e => {res.json(e)})
 });
 
-router.post("/api/workouts", (req, res) => {
-    workout = new db.Workouts();
-    workout.calcTotalDuration();
 
-    db.Workouts.create(workout)
-        .then( data => {res.json(data)})
-        .catch( e => {res.json(e)})
+
+router.put("/api/workouts/:id", ({body, params}, res) => {
+    Workout.findByIdAndUpdate(params.id, {$push: {exercise: body}},
+        {new: true})
+    .then(data => {
+        res.json(data);})
+    .catch(e => {
+        res.json(e);});
 });
 
-router.put("/api/workouts:id", (req, res) => {
-    // push new exercise
-
-    // update workout by id (db.workout.find({_id = Mongoose.type.ObjectId(req.
-       
-        // with req.body data 
-        // $set:{$push:{excercis: req.body}}
-        // respond with db response
+router.delete("/api/workouts/:id", (req ,res) => {
+    Workout.findByIdAndDelete(req.params.id).then( data => {
+        res.json(data);
+    }).catch(e => {res.json(e);})
 });
+
+router.get("/api/workouts/range", (req, res) => {
+    Workout.find().limit(7).then(data => {
+        console.log(data)
+        res.json(data)
+    }).catch(e => {res.json(e)});
+});
+
 
 // html routes
 router.get("/exercise", (req, res) => {

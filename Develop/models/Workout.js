@@ -7,21 +7,24 @@ const WorkoutSchema = new Schema({
     type: Date,
     default:  new Date()
 },
-  excercise: [
+  excercises: [
     {
-        name : String, 
+        name : String,
         type : String, 
         weight : Number, 
         sets : Number, 
-        reps : Number, 
-        duration : Number
+        reps : Number,
+        duration : Number,
+        distance: Number
     }
   ]
 });
 
-// add calc total weight
-Workout.method.calcTotalDuration = function(){
-  this.totalDuration = this.excercise.reduce /*(find sum of duration)*/
+
+WorkoutSchema.method.calcTotalDuration = function(){
+  return this.totalDuration = this.excercises.reduce((total, exercise) =>{
+    return total + exercise.duration;
+  }, 0);
 }
 
 const Workout = mongoose.model("Workout", WorkoutSchema);
