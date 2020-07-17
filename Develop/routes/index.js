@@ -6,42 +6,43 @@ const Workout = require("../models/Workout.js");
 
 // api routes
 router.post("/api/workouts", (req, res) => {
-
     Workout.create()
-        .then( data => {res.json(data)})
+        console.log(req)
+        // gives a post 500 internal error, response says cant get then of undefined
+        .then( workout => {
+            console.log(workout);
+            res.json(workout)})
         .catch( e => {res.json(e)})
+});
+
+router.put("/api/workouts/:id", ({body, params}, res) => {
+    Workout.findByIdAndUpdate(params.id, {$push: {exercises: body}},
+        {new: true})
+    .then(workout => {
+        res.json(workout);})
+    .catch(e => {
+        res.json(e);});
 });
 
 router.get("/api/workouts", (req, res) => {
     // res.json all the workouts
     Workout.find()
-        .then( data => {
-            console.log(data) 
-            res.json(data)})
+        .then( workout => {
+            console.log(workout) 
+            res.json(workout)})
         .catch( e => {res.json(e)})
 });
 
-
-
-router.put("/api/workouts/:id", ({body, params}, res) => {
-    Workout.findByIdAndUpdate(params.id, {$push: {exercise: body}},
-        {new: true})
-    .then(data => {
-        res.json(data);})
-    .catch(e => {
-        res.json(e);});
-});
-
 router.delete("/api/workouts/:id", (req ,res) => {
-    Workout.findByIdAndDelete(req.params.id).then( data => {
-        res.json(data);
+    Workout.findByIdAndDelete(req.params.id).then( workout => {
+        res.json(workout);
     }).catch(e => {res.json(e);})
 });
 
 router.get("/api/workouts/range", (req, res) => {
-    Workout.find().limit(7).then(data => {
-        console.log(data)
-        res.json(data)
+    Workout.find().limit(7).then(workout => {
+        console.log(workout)
+        res.json(workout)
     }).catch(e => {res.json(e)});
 });
 
